@@ -6,6 +6,7 @@ EXEC=$(BINDIR)/bfunc
 SRC := $(shell find $(SRCDIR) -name \*.cpp)
 OBJ := $(patsubst $(SRCDIR)/%.cpp,$(OBJDIR)/%.o,$(SRC))
 
+CC=g++
 DEBUG=-DDEBUG -g -w -pedantic -Wall
 RELEASE=-DNDEBUG -O2
 CXXFLAGS=-std=c++11
@@ -32,11 +33,11 @@ release: CXXFLAGS := $(RELEASE) $(CXXFLAGS)
 release: $(EXEC)
 
 $(EXEC): $(OBJ) | $(BINDIR)
-	g++ $(CXXFLAGS) -o $(EXEC) $(OBJ) $(LDFLAGS)
+	$(CC) $(CXXFLAGS) -o $(EXEC) $(OBJ) $(LDFLAGS)
 
 $(OBJDIR)/%.o: $(SRCDIR)/%.cpp
 	mkdir -p "$(dir $@)"
-	g++ -c $(CXXFLAGS) $(INC) $< -o $@
+	$(CC) -c $(CXXFLAGS) $(INC) $< -o $@
 
 $(OBJ): | $(OBJDIR)
 

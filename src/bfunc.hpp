@@ -64,7 +64,8 @@ namespace Boolean {
 			Function(Function&& another);
 			~Function();
 
-			Function(size_t arguments);
+			enum class Generation {Zeros, Randomly};
+			Function(size_t arguments, Generation method = Generation::Zeros);
 
 			Function& operator=(Function const& another);
 			Function& operator=(Function&& another);

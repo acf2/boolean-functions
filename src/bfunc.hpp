@@ -53,14 +53,15 @@ namespace Boolean {
 			Function& operator=(Function&& another);
 			
 			void set_value(size_t argument_tuple, bool value) {
+				assert(argument_tuple / base_bitsize < size);
 				if (value != 0) {
-					body[argument_tuple / base_bitsize] |= 1 << (argument_tuple % base_bitsize);
+					body[argument_tuple / base_bitsize] |= static_cast<Base>(1) << (argument_tuple % base_bitsize);
 				} else {
-					body[argument_tuple / base_bitsize] &= ~(1 << argument_tuple % base_bitsize);
+					body[argument_tuple / base_bitsize] &= ~(static_cast<Base>(1) << argument_tuple % base_bitsize);
 				}
 			}
 			bool operator()(size_t argument_tuple) {
-				return (body[argument_tuple / base_bitsize] & (1 << argument_tuple % base_bitsize)) != 0;
+				return (body[argument_tuple / base_bitsize] & (static_cast<Base>(1) << argument_tuple % base_bitsize)) != 0;
 			}
 	};
 

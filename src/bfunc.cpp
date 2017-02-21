@@ -44,4 +44,12 @@ namespace Boolean {
 		}
 		return result;
 	}
+	size_t Function::weight() const {
+		size_t result = 0;
+		std::for_each(body, std::next(body, size), [&result](Base const& base) -> void {
+			result += Boolean::weight(base);
+			std::cout << result << std::endl;
+		});
+		return result;
+	}
 }

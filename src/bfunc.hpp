@@ -28,6 +28,22 @@ namespace Boolean {
 		return zeros;
 	}
 
+	template<typename T>
+	size_t weight(T vector) {
+		size_t const bitsize = sizeof(T) << 3;
+
+		T mask = static_cast<T>(0);
+		T result = vector;
+		for (size_t mask_size = 2; mask_size <= bitsize; mask_size <<= 1) {
+			mask = static_cast<T>(0);
+			for (size_t i = 0; i < bitsize / mask_size; ++i)
+				mask = (mask << mask_size) | ((static_cast<T>(1) << (mask_size >> 1)) - 1);
+			result = (result & mask) + ((result & ~mask) >> (mask_size >> 1));
+		}
+
+		return result;
+	}
+
 	class Function {
 		private:
 			Base* body;
@@ -63,6 +79,11 @@ namespace Boolean {
 			}
 			bool operator()(size_t argument_tuple) {
 				return (body[argument_tuple / base_bitsize] & (static_cast<Base>(1) << argument_tuple % base_bitsize)) != 0;
+			}
+
+			size_t weight() const;
+			size_t bitsize() const {
+				return 1 << arguments;
 			}
 	};
 

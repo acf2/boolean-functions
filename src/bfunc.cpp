@@ -47,9 +47,10 @@ namespace Boolean {
 
 	size_t Function::weight() const {
 		size_t result = 0;
-		std::for_each(body, std::next(body, size), [&result](Base const& base) -> void {
+		std::for_each(body, std::next(body, size-1), [&result](Base const& base) -> void {
 			result += Boolean::weight(base);
 		});
+		result += Boolean::weight(body[size-1] & (1 << arguments) % base_bitsize);
 		return result;
 	}
 
@@ -64,4 +65,14 @@ namespace Boolean {
 		}
 		return result;
 	}
+
+	std::ostream& operator<<(std::ostream& os, Function const& func) {
+		for (size_t i = 0; i < func.size - 1; ++i)
+			for (size_t bit = 0; bit < base_bitsize; ++bit)
+				os << ((func.body[i] & static_cast<Base>(1) << bit) == 0 ? '0' : '1');
+		for (size_t bit = 0; bit < (1 << func.arguments) % base_bitsize; ++bit)
+			os << ((func.body[func.size-1] & static_cast<Base>(1) << bit) == 0 ? '0' : '1');
+		return os;
+	}
 }
+

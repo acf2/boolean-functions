@@ -4,6 +4,7 @@
 #include <utility>
 #include <algorithm>
 #include <string>
+#include <iostream>
 
 #include <stdexcept>
 #include <cassert>
@@ -86,6 +87,8 @@ namespace Boolean {
 			size_t bitsize() const {
 				return 1 << arguments;
 			}
+
+			friend std::ostream& operator<<(std::ostream& os, Function const& func);
 	};
 
 	Function to_function(std::string str);

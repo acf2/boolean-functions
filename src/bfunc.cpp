@@ -47,10 +47,16 @@ namespace Boolean {
 
 	size_t Function::weight() const {
 		size_t result = 0;
-		std::for_each(body, std::next(body, size-1), [&result](Base const& base) -> void {
-			result += Boolean::weight(base);
-		});
-		result += Boolean::weight(body[size-1] & (1 << arguments) % base_bitsize);
+		if ((1 << arguments) % base_bitsize == 0) {
+			std::for_each(body, std::next(body, size), [&result](Base const& base) -> void {
+				result += Boolean::weight(base);
+			});
+		} else {
+			std::for_each(body, std::next(body, size-1), [&result](Base const& base) -> void {
+				result += Boolean::weight(base);
+			});
+			result += Boolean::weight(body[size-1] & ((static_cast<Base>(1) << (1 << arguments) % base_bitsize) - 1));
+		}
 		return result;
 	}
 

@@ -15,7 +15,8 @@ namespace Boolean {
 	template<typename T>
 	size_t count_tail_zeros(T number) {
 		assert(number != 0);
-		size_t bitsize = sizeof(T) << 3, zeros = 0;
+		size_t const bitsize = sizeof(T) << 3;
+		size_t zeros = 0;
 
 		for (size_t step = bitsize >> 1; step != 0; step >>= 1) {
 			if ((number << bitsize - step) == 0) {

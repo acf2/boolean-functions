@@ -8,7 +8,7 @@ OBJ := $(patsubst $(SRCDIR)/%.cpp,$(OBJDIR)/%.o,$(SRC))
 
 CC=g++
 DEBUG=-DDEBUG -g -w -pedantic -Wall
-RELEASE=-DNDEBUG -O2
+RELEASE=-DNDEBUG -flto -O2
 CXXFLAGS=-std=c++11
 
 # Примеры библиотечных переменных

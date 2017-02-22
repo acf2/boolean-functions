@@ -52,7 +52,7 @@ namespace Boolean {
 			size_t size;
 
 		public:
-			friend void swap(Function& one, Function& another) {
+			friend void swap(Function& one, Function& another) noexcept {
 				using std::swap;
 
 				swap(one.body, another.body);
@@ -85,7 +85,7 @@ namespace Boolean {
 
 			size_t weight() const;
 			size_t bitsize() const {
-				return 1 << arguments;
+				return static_cast<size_t>(1) << arguments;
 			}
 
 			friend std::ostream& operator<<(std::ostream& os, Function const& func);

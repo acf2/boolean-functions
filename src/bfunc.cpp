@@ -28,7 +28,7 @@ namespace Boolean {
 	}
 
 	Function::Function(size_t arguments, Generation method) : arguments(arguments) {
-		size = (1 << arguments) / base_bitsize + ((1 << arguments) % base_bitsize == 0 ? 0 : 1);
+		size = (static_cast<size_t>(1) << arguments) / base_bitsize + ((static_cast<size_t>(1) << arguments) % base_bitsize == 0 ? 0 : 1);
 		body = new Base[size];
 
 		switch (method) {
@@ -47,7 +47,7 @@ namespace Boolean {
 
 	size_t Function::weight() const {
 		size_t result = 0;
-		if ((1 << arguments) % base_bitsize == 0) {
+		if ((static_cast<size_t>(1) << arguments) % base_bitsize == 0) {
 			std::for_each(body, std::next(body, size), [&result](Base const& base) -> void {
 				result += Boolean::weight(base);
 			});
@@ -55,7 +55,7 @@ namespace Boolean {
 			std::for_each(body, std::next(body, size-1), [&result](Base const& base) -> void {
 				result += Boolean::weight(base);
 			});
-			result += Boolean::weight(body[size-1] & ((static_cast<Base>(1) << (1 << arguments) % base_bitsize) - 1));
+			result += Boolean::weight(body[size-1] & ((static_cast<Base>(1) << (static_cast<size_t>(1) << arguments) % base_bitsize) - 1));
 		}
 		return result;
 	}

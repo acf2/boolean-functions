@@ -5,6 +5,7 @@
 #include <algorithm>
 #include <string>
 #include <iostream>
+#include <unordered_map>
 
 #include <stdexcept>
 #include <cassert>
@@ -37,6 +38,7 @@ namespace Boolean {
 		T result = vector;
 		for (size_t mask_size = 2; mask_size <= bitsize; mask_size <<= 1) {
 			mask = static_cast<T>(0);
+			//TODO: сделать генерацию масок во время компиляции
 			for (size_t i = 0; i < bitsize / mask_size; ++i)
 				mask = (mask << mask_size) | ((static_cast<T>(1) << (mask_size >> 1)) - 1);
 			result = (result & mask) + ((result & ~mask) >> (mask_size >> 1));
@@ -87,11 +89,15 @@ namespace Boolean {
 			size_t bitsize() const {
 				return static_cast<size_t>(1) << arguments;
 			}
+			size_t get_arguments() const {
+				return arguments;
+			}
 
 			friend std::ostream& operator<<(std::ostream& os, Function const& func);
 	};
 
 	Function to_function(std::string str);
+	std::string to_formula(Function mobius);
 }
 
 #endif //__BOOLEAN_FUNCTION_HPP

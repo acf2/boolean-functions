@@ -72,6 +72,38 @@ namespace Boolean {
 		return result;
 	}
 
+	std::string to_formula(Function mobius) {
+		std::unordered_map<char, std::string> const digits = {{'0',"\u2080"}, {'1', "\u2081"}, {'2', "\u2082"}, {'3', "\u2083"}, {'4', "\u2084"}, {'5', "\u2085"}, {'6', "\u2086"}, {'7', "\u2087"}, {'8', "\u2088"}, {'9', "\u2089"}}; 
+		std::string const sign = "\u2295";
+		std::string const variable = "x";
+		std::string const separator = " ";
+
+		auto construct_monomial = [&digits, &sign, &variable](Function const& mobius, size_t index) -> std::string {
+			std::string monomial;
+			std::string buffer;
+			if (index == 0) return std::string("1");
+			for (size_t i = 0; i < mobius.get_arguments(); ++i) {
+				if ((index & static_cast<size_t>(1) << (mobius.get_arguments() - i - 1)) == 0)
+					continue;
+				monomial += variable;
+				buffer = std::to_string(i + 1);
+				for (auto ch: buffer)
+					monomial += digits.at(ch);
+			}
+			return monomial;
+		};
+
+		std::string result;
+
+		for (size_t i = 0; i < mobius.bitsize(); ++i) {
+			if (mobius(i) == 0) continue;
+			if (!result.empty())
+				result += separator + sign + separator;
+			result += construct_monomial(mobius, i);
+		}
+		return (result.empty() ? "0" : result);
+	}
+
 	std::ostream& operator<<(std::ostream& os, Function const& func) {
 		for (size_t i = 0; i < func.size - 1; ++i)
 			for (size_t bit = 0; bit < base_bitsize; ++bit)

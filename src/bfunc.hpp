@@ -85,13 +85,13 @@ namespace Boolean {
 				return (body[argument_tuple / base_bitsize] & (static_cast<Base>(1) << argument_tuple % base_bitsize)) != 0;
 			}
 
-			size_t weight() const;
-			size_t bitsize() const {
-				return static_cast<size_t>(1) << arguments;
-			}
 			size_t get_arguments() const {
 				return arguments;
 			}
+			size_t bitsize() const {
+				return static_cast<size_t>(1) << arguments;
+			}
+			size_t weight() const;
 			size_t degree() const;
 
 			friend std::ostream& operator<<(std::ostream& os, Function const& func);

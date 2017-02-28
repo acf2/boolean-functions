@@ -92,6 +92,7 @@ namespace Boolean {
 			size_t get_arguments() const {
 				return arguments;
 			}
+			size_t degree() const;
 
 			friend std::ostream& operator<<(std::ostream& os, Function const& func);
 	};

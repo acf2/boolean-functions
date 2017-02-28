@@ -60,6 +60,40 @@ namespace Boolean {
 		return result;
 	}
 
+	size_t Function::degree() const {
+		size_t result = 0;
+		size_t temp;
+		if ((static_cast<size_t>(1) << arguments) % base_bitsize == 0) {
+			for (size_t base = 0; base < size; ++base) {
+				if (body[base] == 0) continue;
+				for (size_t bit = 0; bit < base_bitsize; ++bit) {
+					if ((body[base] & (static_cast<Base>(1) << bit)) == 0)
+						continue;
+					temp = Boolean::weight(base * base_bitsize + bit);
+					if (temp > result) result = temp;
+				}
+			}
+		} else {
+			for (size_t base = 0; base < size-1; ++base) {
+				if (body[base] == 0) continue;
+				for (size_t bit = 0; bit < base_bitsize; ++bit) {
+					if ((body[base] & (static_cast<Base>(1) << bit)) == 0)
+						continue;
+					temp = Boolean::weight(base * base_bitsize + bit);
+					if (temp > result) result = temp;
+				}
+			}
+			if (body[size-1] == 0) return result;
+			for (size_t bit = 0; bit < (static_cast<size_t>(1) << arguments) % base_bitsize; ++bit) {
+				if ((body[size-1] & (static_cast<Base>(1) << bit)) == 0)
+					continue;
+				temp = Boolean::weight((size-1) * base_bitsize + bit);
+				if (temp > result) result = temp;
+			}
+		}
+		return result;
+	}
+
 	Function to_function(std::string str) {
 		if ((str.size() & (str.size() - 1)) != 0)
 			throw std::domain_error("lenght is not power of 2");

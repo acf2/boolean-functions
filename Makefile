@@ -8,7 +8,8 @@ OBJ := $(patsubst $(SRCDIR)/%.cpp,$(OBJDIR)/%.o,$(SRC))
 
 CC=g++
 DEBUG=-DDEBUG -g -w -pedantic -Wall
-RELEASE=-DNDEBUG -flto -O2
+RELEASE=-DNDEBUG
+OPT=-DNDEBUG -flto -O2
 CXXFLAGS=-std=c++11
 
 # Примеры библиотечных переменных
@@ -31,6 +32,9 @@ debug: $(EXEC)
 
 release: CXXFLAGS := $(RELEASE) $(CXXFLAGS)
 release: $(EXEC)
+
+opt: CXXFLAGS := $(OPT) $(CXXFLAGS)
+opt: $(EXEC)
 
 $(EXEC): $(OBJ) | $(BINDIR)
 	$(CC) $(CXXFLAGS) -o $(EXEC) $(OBJ) $(LDFLAGS)

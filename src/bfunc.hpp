@@ -96,6 +96,7 @@ namespace Boolean {
 			}
 			size_t weight() const;
 			size_t degree() const;
+			Function mobius() const;
 
 			friend std::ostream& operator<<(std::ostream& os, Function const& func);
 	};

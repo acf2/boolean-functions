@@ -113,6 +113,35 @@ namespace Boolean {
 		return result;
 	}
 
+	Function Function::mobius() const {
+		Function result(*this);
+
+		// Для каждой базы отдельно - до маски размера base_bitsize/2
+		Base mask = 0, temp;
+		for (size_t bits = 1; bits < std::min(base_bitsize, static_cast<size_t>(1) << result.arguments); bits <<= 1) {
+			for (size_t i = 0; i < result.size; ++i) {
+				// TODO: Тоже генерацию масок во время компиляции хотелось бы
+				for (Base mask = (1 << bits) - 1; mask != 0; mask <<= bits * 2) {
+					temp = result.body[i] & mask;
+					result.body[i] ^= temp << bits;
+				}
+			}
+		}
+
+		assert((result.size & result.size - 1) == 0); //aka: exists k (result.size == power(2, k))
+		// Для масок с размерами, кратными размерам баз
+		for (size_t bases = 1; bases < result.size; bases <<= 1) {
+			// Цикл по отрезкам: источник-назначение
+			for (size_t segment = 0; segment < result.size / (bases * 2); ++segment) {
+				for (size_t base = 0; base < bases; ++base) {
+					result.body[segment * bases * 2 + bases + base] ^= result.body[segment * bases * 2 + base];
+				}
+			}
+		}
+
+		return result;
+	}
+
 	Function to_function(std::string str) {
 		if ((str.size() & (str.size() - 1)) != 0)
 			throw std::domain_error("lenght is not power of 2");

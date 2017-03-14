@@ -27,6 +27,25 @@ namespace Boolean {
 		return *this;
 	}
 
+	bool Function::operator==(Function const& another) const {
+		if (this->size != another.size) return 0;
+		if ((1 << arguments) % base_bitsize == 0) {
+			for (size_t i = 0; i < this->size; ++i) {
+				if (this->body[i] != another.body[i]) return 0;
+			}
+		} else {
+			for (size_t i = 0; i < this->size - 1; ++i) {
+				if (this->body[i] != another.body[i]) return 0;
+			}
+			if ((this->body[this->size] & (1 << arguments) - 1) != (another.body[another.size] & (1 << arguments) - 1)) return 0;
+		}
+		return 1;
+	}
+
+	bool Function::operator!=(Function const& another) const {
+		return !(*this == another);
+	}
+
 	Function::Function(size_t arguments, Generation method) : arguments(arguments) {
 		size = (static_cast<size_t>(1) << arguments) / base_bitsize + ((static_cast<size_t>(1) << arguments) % base_bitsize == 0 ? 0 : 1);
 		body = new Base[size];

@@ -72,6 +72,9 @@ namespace Boolean {
 
 			Function& operator=(Function const& another);
 			Function& operator=(Function&& another);
+
+			bool operator==(Function const& another) const;
+			bool operator!=(Function const& another) const;
 			
 			void set_value(size_t argument_tuple, bool value) {
 				assert(argument_tuple / base_bitsize < size);

@@ -103,6 +103,7 @@ namespace Boolean {
 
 	Function to_function(std::string str);
 	std::string to_formula(Function mobius);
+	std::vector<int> wh_transform(Function func);
 }
 
 #endif //__BOOLEAN_FUNCTION_HPP

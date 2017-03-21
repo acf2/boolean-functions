@@ -186,6 +186,31 @@ namespace Boolean {
 		return (result.empty() ? "0" : result);
 	}
 
+	std::vector<int> wh_transform(Function func) {
+		using std::swap;
+		std::vector<int> result(func.bitsize());
+
+		for (size_t i = 0; i < func.bitsize(); ++i) {
+			result[i] = (func(i) != 0 ? -1 : 1);
+		}
+
+		int sum, diff;
+		for (size_t segment_size = 1; segment_size < result.size(); segment_size <<= 1) {
+			for (size_t segment = 0; segment < result.size() / (segment_size * 2); ++segment) {
+				for (size_t cell = 0; cell < segment_size; ++cell) {
+					sum = result[segment_size * segment * 2 + cell]
+						+ result[segment_size * segment * 2 + segment_size + cell];
+					diff = result[segment_size * segment * 2 + cell]
+						 - result[segment_size * segment * 2 + segment_size + cell];
+					result[segment_size * segment * 2 + cell] = sum;
+					result[segment_size * segment * 2 + segment_size + cell] = diff;
+				}
+			}
+		}
+
+		return result;
+	}
+
 	std::ostream& operator<<(std::ostream& os, Function const& func) {
 		for (size_t i = 0; i < func.size - 1; ++i)
 			for (size_t bit = 0; bit < base_bitsize; ++bit)

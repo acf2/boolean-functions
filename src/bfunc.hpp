@@ -11,9 +11,6 @@
 #include <cassert>
 
 namespace Boolean {
-	typedef unsigned long Base;
-	const size_t base_bitsize = sizeof(Base) << 3;
-
 	template<typename T>
 	size_t count_tail_zeros(T number) {
 		assert(number != 0);
@@ -52,6 +49,14 @@ namespace Boolean {
 		size_t arguments;
 		bool constant;
 	};
+
+	// Combinatorics
+	size_t initial_combination(size_t cardinality, size_t elements);
+	size_t next_combination(size_t combination);
+	bool is_last_combination(size_t combination);
+
+	typedef unsigned long Base;
+	const size_t base_bitsize = sizeof(Base) << 3;
 
 	class Function {
 		private:
@@ -104,6 +109,7 @@ namespace Boolean {
 			size_t degree() const;
 			Function mobius() const;
 			unsigned long long nonlinearity() const;
+			//size_t correlation_immunity_order(size_t boundary = sizeof(size_t) << 3) const;
 
 			friend std::ostream& operator<<(std::ostream& os, Function const& func);
 	};

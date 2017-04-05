@@ -1,13 +1,14 @@
 #include "bfunc.hpp"
 #include <iostream>
 
+#include <bitset>
 using namespace Boolean;
 
 int main() {
-	Function F;
-	for (size_t i = 2; i < 8; ++i) {
-		F = Function(i, Function::Generation::Randomly);
-		std::cout << i << ": " << to_formula(F) << std::endl;
-		std::cout << F.degree() << std::endl << std::endl;
+	size_t comb = initial_combination(5, 2);
+	std::cout << std::bitset<5>(comb) << std::endl;
+	while (!is_last_combination(comb)) {
+		comb = next_combination(comb);
+		std::cout << std::bitset<5>(comb) << std::endl;
 	}
 }

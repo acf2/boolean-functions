@@ -141,6 +141,20 @@ namespace Boolean {
 
 		return result;
 	}
+//	size_t Function::correlation_immunity_order(size_t boundary) const {
+//		size_t my_weight = this->weight();
+//		if (my_weight == 0 || my_weight == (static_cast<size_t>(1) << arguments))
+//			return 0;
+//
+//		size_t arg_tuple;
+//		for (size_t i = 1; i < arguments; ++i) {
+//			arg_tuple = initial_combination(arguments, i);
+//			for (;;) {
+//
+//				if (is_last_combination(arg_tuple)) break;
+//			}
+//		}
+//	}
 
 	unsigned long long Function::nonlinearity() const {
 		using std::vector;

@@ -108,12 +108,20 @@ namespace Boolean {
 			size_t weight() const;
 			size_t degree() const;
 			Function mobius() const;
-			unsigned long long nonlinearity() const;
-			//size_t correlation_immunity_order(size_t boundary = sizeof(size_t) << 3) const;
 
 			friend std::ostream& operator<<(std::ostream& os, Function const& func);
 	};
 
+	class Spectrum : public std::vector<int> {
+		protected:
+			size_t arguments;
+
+		public:
+			Spectrum(Function const& func);
+			size_t get_arguments() const {
+				return arguments;
+			}
+	};
 
 	class Symbols {
 		public:
@@ -126,8 +134,9 @@ namespace Boolean {
 	Function to_function(std::string str);
 	std::string to_formula(Function mobius);
 	std::string to_formula(AffineFunction affine_func);
-	std::vector<int> wh_transform(Function const& func);
-	AffineFunction best_affine_approximation(Function const& func);
+	unsigned long long nonlinearity(Spectrum const& wh);
+	//size_t correlation_immunity_order(size_t boundary = sizeof(size_t) << 3) const;
+	AffineFunction best_affine_approximation(Spectrum const& wh);
 }
 
 #endif //__BOOLEAN_FUNCTION_HPP

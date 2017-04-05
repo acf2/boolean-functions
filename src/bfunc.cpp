@@ -141,32 +141,6 @@ namespace Boolean {
 
 		return result;
 	}
-//	size_t Function::correlation_immunity_order(size_t boundary) const {
-//		size_t my_weight = this->weight();
-//		if (my_weight == 0 || my_weight == (static_cast<size_t>(1) << arguments))
-//			return 0;
-//
-//		size_t arg_tuple;
-//		for (size_t i = 1; i < arguments; ++i) {
-//			arg_tuple = initial_combination(arguments, i);
-//			for (;;) {
-//
-//				if (is_last_combination(arg_tuple)) break;
-//			}
-//		}
-//	}
-
-	unsigned long long Function::nonlinearity() const {
-		using std::vector;
-
-		vector<int> wh = wh_transform(*this);
-		unsigned long long result = (wh[0] < 0 ? -wh[0] : wh[0]), temp;
-		for (size_t i = 1; i < wh.size(); ++i) {
-			temp = static_cast<unsigned long long>(wh[i] < 0 ? -wh[i] : wh[i]);
-			if (result < temp) result = temp;
-		}
-		return (static_cast<long long>(1) << this->arguments - 1) - result / 2;
-	}
 
 	Function to_function(std::string str) {
 		if ((str.size() & (str.size() - 1)) != 0)
@@ -235,50 +209,45 @@ namespace Boolean {
 		return (result.empty() ? "0" : result);
 	}
 
-	std::vector<int> wh_transform(Function const& func) {
-		using std::swap;
-		std::vector<int> result(func.bitsize());
-
-		for (size_t i = 0; i < func.bitsize(); ++i) {
-			result[i] = (func(i) != 0 ? -1 : 1);
+	unsigned long long nonlinearity(Spectrum const& wh) {
+		unsigned long long result = (wh[0] < 0 ? -wh[0] : wh[0]), temp;
+		for (size_t i = 1; i < wh.size(); ++i) {
+			temp = static_cast<unsigned long long>(wh[i] < 0 ? -wh[i] : wh[i]);
+			if (result < temp) result = temp;
 		}
-
-		int sum, diff;
-		for (size_t segment_size = 1; segment_size < result.size(); segment_size <<= 1) {
-			for (size_t segment = 0; segment < result.size() / (segment_size * 2); ++segment) {
-				for (size_t cell = 0; cell < segment_size; ++cell) {
-					sum = result[segment_size * segment * 2 + cell]
-						+ result[segment_size * segment * 2 + segment_size + cell];
-					diff = result[segment_size * segment * 2 + cell]
-						 - result[segment_size * segment * 2 + segment_size + cell];
-					result[segment_size * segment * 2 + cell] = sum;
-					result[segment_size * segment * 2 + segment_size + cell] = diff;
-				}
-			}
-		}
-
-		return result;
+		return (static_cast<long long>(1) << wh.get_arguments() - 1) - result / 2;
 	}
 
-	AffineFunction best_affine_approximation(Function const& func) {
-		using std::vector;
+//	size_t Function::correlation_immunity_order(size_t boundary) const {
+//		size_t my_weight = this->weight();
+//		if (my_weight == 0 || my_weight == (static_cast<size_t>(1) << arguments))
+//			return 0;
+//
+//		size_t arg_tuple;
+//		for (size_t i = 1; i < arguments; ++i) {
+//			arg_tuple = initial_combination(arguments, i);
+//			for (;;) {
+//
+//				if (is_last_combination(arg_tuple)) break;
+//			}
+//		}
+//	}
 
-		vector<int> wh = wh_transform(func);
+	AffineFunction best_affine_approximation(Spectrum const& wh) {
 		AffineFunction result;
-		result.arguments = func.get_arguments();
+		result.arguments = wh.get_arguments();
 		unsigned long long biggest = (wh[0] < 0 ? -wh[0] : wh[0]), temp;
-		size_t index = 0;
 		for (size_t i = 1; i < wh.size(); ++i) {
 			temp = static_cast<unsigned long long>(wh[i] < 0 ? -wh[i] : wh[i]);
 			if (biggest < temp) {
 				biggest = temp;
-				index = i;
+				result.coefficient = i;
 			}
 		}
-		result.coefficient = index;
-		if (wh[index] > 0) result.constant = 0;
-		else if (wh[index] < 0) result.constant = 1;
-		else assert(0); //Something is wrong
+
+		assert(wh[result.coefficient] != 0);
+		if (wh[result.coefficient] > 0) result.constant = 0;
+		else if (wh[result.coefficient] < 0) result.constant = 1;
 
 		return result;
 	}

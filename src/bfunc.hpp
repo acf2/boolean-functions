@@ -47,6 +47,12 @@ namespace Boolean {
 		return result;
 	}
 
+	struct AffineFunction {
+		size_t coefficient;
+		size_t arguments;
+		bool constant;
+	};
+
 	class Function {
 		private:
 			Base* body;
@@ -84,7 +90,7 @@ namespace Boolean {
 					body[argument_tuple / base_bitsize] &= ~(static_cast<Base>(1) << argument_tuple % base_bitsize);
 				}
 			}
-			bool operator()(size_t argument_tuple) {
+			bool operator()(size_t argument_tuple) const {
 				return (body[argument_tuple / base_bitsize] & (static_cast<Base>(1) << argument_tuple % base_bitsize)) != 0;
 			}
 
@@ -97,13 +103,25 @@ namespace Boolean {
 			size_t weight() const;
 			size_t degree() const;
 			Function mobius() const;
+			unsigned long long nonlinearity() const;
 
 			friend std::ostream& operator<<(std::ostream& os, Function const& func);
 	};
 
+
+	class Symbols {
+		public:
+			static std::unordered_map<char, std::string> const digits;
+			static std::string const sign;
+			static std::string const variable;
+			static std::string const separator;
+	};
+
 	Function to_function(std::string str);
 	std::string to_formula(Function mobius);
-	std::vector<int> wh_transform(Function func);
+	std::string to_formula(AffineFunction affine_func);
+	std::vector<int> wh_transform(Function const& func);
+	AffineFunction best_affine_approximation(Function const& func);
 }
 
 #endif //__BOOLEAN_FUNCTION_HPP

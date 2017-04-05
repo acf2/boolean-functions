@@ -142,6 +142,18 @@ namespace Boolean {
 		return result;
 	}
 
+	unsigned long long Function::nonlinearity() const {
+		using std::vector;
+
+		vector<int> wh = wh_transform(*this);
+		unsigned long long result = (wh[0] < 0 ? -wh[0] : wh[0]), temp;
+		for (size_t i = 1; i < wh.size(); ++i) {
+			temp = static_cast<unsigned long long>(wh[i] < 0 ? -wh[i] : wh[i]);
+			if (result < temp) result = temp;
+		}
+		return (static_cast<long long>(1) << this->arguments - 1) - result / 2;
+	}
+
 	Function to_function(std::string str) {
 		if ((str.size() & (str.size() - 1)) != 0)
 			throw std::domain_error("lenght is not power of 2");
@@ -155,22 +167,17 @@ namespace Boolean {
 	}
 
 	std::string to_formula(Function mobius) {
-		std::unordered_map<char, std::string> const digits = {{'0',"\u2080"}, {'1', "\u2081"}, {'2', "\u2082"}, {'3', "\u2083"}, {'4', "\u2084"}, {'5', "\u2085"}, {'6', "\u2086"}, {'7', "\u2087"}, {'8', "\u2088"}, {'9', "\u2089"}}; 
-		std::string const sign = "\u2295";
-		std::string const variable = "x";
-		std::string const separator = " ";
-
-		auto construct_monomial = [&digits, &sign, &variable](Function const& mobius, size_t index) -> std::string {
+		auto construct_monomial = [](Function const& mobius, size_t index) -> std::string {
 			std::string monomial;
 			std::string buffer;
 			if (index == 0) return std::string("1");
 			for (size_t i = 0; i < mobius.get_arguments(); ++i) {
 				if ((index & static_cast<size_t>(1) << (mobius.get_arguments() - i - 1)) == 0)
 					continue;
-				monomial += variable;
+				monomial += Symbols::variable;
 				buffer = std::to_string(i + 1);
 				for (auto ch: buffer)
-					monomial += digits.at(ch);
+					monomial += Symbols::digits.at(ch);
 			}
 			return monomial;
 		};
@@ -180,13 +187,41 @@ namespace Boolean {
 		for (size_t i = 0; i < mobius.bitsize(); ++i) {
 			if (mobius(i) == 0) continue;
 			if (!result.empty())
-				result += separator + sign + separator;
+				result += Symbols::separator + Symbols::sign + Symbols::separator;
 			result += construct_monomial(mobius, i);
 		}
 		return (result.empty() ? "0" : result);
 	}
 
-	std::vector<int> wh_transform(Function func) {
+	std::string to_formula(AffineFunction affine_func) {
+		auto construct_monomial = [](AffineFunction af, size_t index) -> std::string {
+			std::string monomial;
+			std::string buffer;
+			monomial += Symbols::variable;
+			buffer = std::to_string(af.arguments - index);
+			for (auto ch: buffer)
+				monomial += Symbols::digits.at(ch);
+			return monomial;
+		};
+
+		std::string result;
+
+		for (size_t i = 0; i < affine_func.arguments; ++i) {
+			if ((affine_func.coefficient & (1 << i)) == 0) continue;
+			if (!result.empty())
+				result += Symbols::separator + Symbols::sign + Symbols::separator;
+			result += construct_monomial(affine_func, i);
+		}
+		if (affine_func.constant != 0) {
+			if (!result.empty())
+				result += Symbols::separator + Symbols::sign + Symbols::separator;
+			result += "1";
+		}
+
+		return (result.empty() ? "0" : result);
+	}
+
+	std::vector<int> wh_transform(Function const& func) {
 		using std::swap;
 		std::vector<int> result(func.bitsize());
 
@@ -207,6 +242,29 @@ namespace Boolean {
 				}
 			}
 		}
+
+		return result;
+	}
+
+	AffineFunction best_affine_approximation(Function const& func) {
+		using std::vector;
+
+		vector<int> wh = wh_transform(func);
+		AffineFunction result;
+		result.arguments = func.get_arguments();
+		unsigned long long biggest = (wh[0] < 0 ? -wh[0] : wh[0]), temp;
+		size_t index = 0;
+		for (size_t i = 1; i < wh.size(); ++i) {
+			temp = static_cast<unsigned long long>(wh[i] < 0 ? -wh[i] : wh[i]);
+			if (biggest < temp) {
+				biggest = temp;
+				index = i;
+			}
+		}
+		result.coefficient = index;
+		if (wh[index] > 0) result.constant = 0;
+		else if (wh[index] < 0) result.constant = 1;
+		else assert(0); //Something is wrong
 
 		return result;
 	}

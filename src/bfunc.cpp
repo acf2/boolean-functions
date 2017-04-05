@@ -218,20 +218,23 @@ namespace Boolean {
 		return (static_cast<long long>(1) << wh.get_arguments() - 1) - result / 2;
 	}
 
-//	size_t Function::correlation_immunity_order(size_t boundary) const {
-//		size_t my_weight = this->weight();
-//		if (my_weight == 0 || my_weight == (static_cast<size_t>(1) << arguments))
-//			return 0;
-//
-//		size_t arg_tuple;
-//		for (size_t i = 1; i < arguments; ++i) {
-//			arg_tuple = initial_combination(arguments, i);
-//			for (;;) {
-//
-//				if (is_last_combination(arg_tuple)) break;
-//			}
-//		}
-//	}
+	size_t correlation_immunity_order(Spectrum const& wh, size_t boundary) {
+		using std::min;
+		using std::abs;
+
+		if (abs(static_cast<long long>(wh[0])) == (static_cast<long long>(1) << wh.get_arguments())) return 0;
+
+		size_t arg_tuple;
+		for (size_t i = 1; i < min(wh.get_arguments(), boundary); ++i) {
+			arg_tuple = initial_combination(wh.get_arguments(), i);
+			for (;;) {
+				if (wh[arg_tuple] != 0) return i - 1;
+				if (is_last_combination(arg_tuple)) break;
+				arg_tuple = next_combination(arg_tuple);
+			}
+		}
+		return min(wh.get_arguments(), boundary) - 1;
+	}
 
 	AffineFunction best_affine_approximation(Spectrum const& wh) {
 		AffineFunction result;

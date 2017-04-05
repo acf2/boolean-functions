@@ -135,7 +135,7 @@ namespace Boolean {
 	std::string to_formula(Function mobius);
 	std::string to_formula(AffineFunction affine_func);
 	unsigned long long nonlinearity(Spectrum const& wh);
-	//size_t correlation_immunity_order(size_t boundary = sizeof(size_t) << 3) const;
+	size_t correlation_immunity_order(Spectrum const& wh, size_t boundary = sizeof(size_t) << 3);
 	AffineFunction best_affine_approximation(Spectrum const& wh);
 }
 

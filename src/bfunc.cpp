@@ -222,10 +222,10 @@ namespace Boolean {
 		using std::min;
 		using std::abs;
 
-		if (abs(static_cast<long long>(wh[0])) == (static_cast<long long>(1) << wh.get_arguments())) return 0;
+		if (abs(static_cast<long long>(wh[0])) == (static_cast<long long>(1) << wh.get_arguments())) return wh.get_arguments();
 
 		size_t arg_tuple;
-		for (size_t i = 1; i < min(wh.get_arguments(), boundary); ++i) {
+		for (size_t i = 1; i <= min(wh.get_arguments(), boundary); ++i) {
 			arg_tuple = initial_combination(wh.get_arguments(), i);
 			for (;;) {
 				if (wh[arg_tuple] != 0) return i - 1;
@@ -233,13 +233,14 @@ namespace Boolean {
 				arg_tuple = next_combination(arg_tuple);
 			}
 		}
-		return min(wh.get_arguments(), boundary) - 1;
+		return min(wh.get_arguments(), boundary);
 	}
 
 	AffineFunction best_affine_approximation(Spectrum const& wh) {
 		AffineFunction result;
 		result.arguments = wh.get_arguments();
 		unsigned long long biggest = (wh[0] < 0 ? -wh[0] : wh[0]), temp;
+		result.coefficient = 0;
 		for (size_t i = 1; i < wh.size(); ++i) {
 			temp = static_cast<unsigned long long>(wh[i] < 0 ? -wh[i] : wh[i]);
 			if (biggest < temp) {
